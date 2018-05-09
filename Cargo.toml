@@ -4,3 +4,9 @@ version = "0.1.0"
 authors = ["AntonHermann <antonoehler@gmx.de>"]
 
 [dependencies]
+clap = "2"
+log = "0.4"
+loggerv = "0.7"
+failure = "*"
+failure_derive = "*"
+termion = "1.5.1"
