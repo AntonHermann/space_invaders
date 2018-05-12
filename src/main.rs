@@ -7,6 +7,7 @@ extern crate failure;
 #[allow(unused_imports)]
 #[macro_use] extern crate failure_derive;
 extern crate termion;
+extern crate specs;
 
 // modules
 mod menu;
