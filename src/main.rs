@@ -44,7 +44,7 @@ fn run() -> Result<(),Error> {
     loop {
         match show_menu()? {
             MenuOptions::Exit => break,
-            _ => {},
+            _ => game::run_game()?,
         }
     }
     println!("{}{}{}{}", termion::cursor::Goto(1,1), termion::clear::All, termion::style::Reset, termion::cursor::Show);
