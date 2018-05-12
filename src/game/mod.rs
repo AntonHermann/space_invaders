@@ -24,7 +24,7 @@ pub fn run_game() -> Result<(), Error> {
 
     loop {
         dispatcher.dispatch(&mut world.res);
-        if *(&world.read_resource::<GameActive>().0) == false {
+        if world.read_resource::<GameActive>().0 == false {
             break;
         }
         thread::sleep(sleep_duration);
