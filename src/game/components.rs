@@ -10,14 +10,7 @@ impl Component for Position {
     type Storage = VecStorage<Self>;
 }
 
-pub struct Bounds {
-    pub w: usize,
-    pub h: usize,
-}
-impl Component for Bounds {
-    type Storage = VecStorage<Self>;
-}
-
+#[allow(dead_code)]
 #[derive(Clone, Debug)]
 pub enum Appearance {
     Player,
@@ -31,6 +24,13 @@ impl Appearance {
             Appearance::Player => Cow::Borrowed("/O\\"),
             Appearance::Enemy => Cow::Borrowed("U"),
             Appearance::Other(s) => Cow::Borrowed(s),
+        }
+    }
+    pub fn get_width(&self) -> usize {
+        match self {
+            Appearance::Player   => 3,
+            Appearance::Enemy    => 1,
+            Appearance::Other(s) => s.len(),
         }
     }
 }
