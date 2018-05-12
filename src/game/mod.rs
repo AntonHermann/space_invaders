@@ -20,6 +20,7 @@ pub fn run_game() -> Result<(), Error> {
     let mut world = World::new();
     world.register::<Position>();
     world.register::<Appearance>();
+    world.register::<PlayerActionQueue>();
     world.add_resource(stdout);
     world.add_resource(GameActive(true));
 
@@ -48,5 +49,6 @@ fn init_player(world: &mut World) {
     world.create_entity()
         .with(Position { x: 0, y: 2 })
         .with(Appearance::Player)
+        .with(PlayerActionQueue::new())
         .build();
 }
