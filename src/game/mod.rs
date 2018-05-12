@@ -1,52 +1,51 @@
-#![allow(dead_code, unused_variables)]
-
 use failure::Error;
-use specs::{ReadStorage, System, World};
-use std::io::{stdin, stdout, Write};
-use termion;
-use termion::cursor;
+use specs::{DispatcherBuilder, World};
+use std::io::stdout;
+use std::{thread, time};
 use termion::raw::IntoRawMode;
 
 pub mod components;
+pub mod systems;
 use self::components::*;
+use self::systems::*;
 
-struct RenderingSystem;
-impl<'a> System<'a> for RenderingSystem {
-    type SystemData = (ReadStorage<'a, Position>, ReadStorage<'a, Appearance>);
-
-    fn run(&mut self, (pos, ap): Self::SystemData) {
-        use specs::Join;
-
-        // TODO: add error handling, don't reallocate stdout each time.
-        let (_, term_height) = termion::terminal_size().expect("couldn't get terminal size");
-        let mut stdout = stdout().into_raw_mode().expect("coudln't access stdout");
-
-        for (p, a) in (&pos, &ap).join() {
-            let y = term_height - p.y as u16;
-            write!(stdout, "{}{}", cursor::Goto(p.x as u16, y), a.to_string())
-                .expect("couldn't print to stdout");
-        }
-        stdout.flush().expect("failed flushing stdout");
-    }
-}
+pub struct GameActive(bool);
 
 pub fn run_game() -> Result<(), Error> {
     // let mut stdout = stdout().into_raw_mode()?;
     let mut world = World::new();
     world.register::<Position>();
     world.register::<Appearance>();
+    world.add_resource(stdout().into_raw_mode()?);
+    world.add_resource(GameActive(true));
 
-    let player = world
+    let _player = world
         .create_entity()
         .with(Position { x: 0, y: 2 })
         .with(Appearance::Player)
         .build();
 
-    use specs::RunNow;
-    let mut rendering_system = RenderingSystem;
-    rendering_system.run_now(&world.res);
+    // let mut rendering_system = RenderingSystem;
+    // let mut player_interaction_system = PlayerInteractionSystem;
+    let mut dispatcher = DispatcherBuilder::new()
+        .add(RenderingSystem, "rendering_system", &[])
+        .add(PlayerInteractionSystem, "player_interaction_system", &[])
+        // .build_async(world);
+        .build();
 
-    stdin().read_line(&mut String::new())?;
+    let sleep_duration = time::Duration::from_millis(10);
+
+    // dispatcher.dispatch(&mut world.res);
+    // stdin().read_line(&mut String::new())?;
+
+    loop {
+        dispatcher.dispatch(&mut world.res);
+        // dispatcher.dispatch();
+        if *(&world.read_resource::<GameActive>().0) == false {
+            break;
+        }
+        thread::sleep(sleep_duration);
+    }
 
     Ok(())
 }

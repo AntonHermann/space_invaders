@@ -1,17 +1,19 @@
 // extern crates
 #[allow(unused_imports)]
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
 extern crate clap;
-extern crate loggerv;
 extern crate failure;
+extern crate loggerv;
 #[allow(unused_imports)]
-#[macro_use] extern crate failure_derive;
-extern crate termion;
+#[macro_use]
+extern crate failure_derive;
 extern crate specs;
+extern crate termion;
 
 // modules
-mod menu;
 mod game;
+mod menu;
 
 // external uses
 use clap::{App, Arg};
@@ -28,7 +30,7 @@ fn main() {
     }
 }
 
-fn run() -> Result<(),Error> {
+fn run() -> Result<(), Error> {
     let args = App::new("Space Invaders")
         .version("0.1.0")
         .author("Anton Hermann")
@@ -48,7 +50,13 @@ fn run() -> Result<(),Error> {
             _ => game::run_game()?,
         }
     }
-    println!("{}{}{}{}", termion::cursor::Goto(1,1), termion::clear::All, termion::style::Reset, termion::cursor::Show);
+    println!(
+        "{}{}{}{}",
+        termion::cursor::Goto(1, 1),
+        termion::clear::All,
+        termion::style::Reset,
+        termion::cursor::Show
+    );
     Ok(())
 }
 
