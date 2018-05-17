@@ -46,30 +46,11 @@ impl Appearance {
     }
 }
 
-#[derive(Debug, Clone)]
-pub enum ProjectileType {
-    Allied,
-    Enemy,
-}
 #[derive(Component, Debug, Clone)]
 #[component(VecStorage)]
-pub struct Projectile {
-    pub ptype: ProjectileType,
-    pub remove_flag: bool,
-}
-impl Projectile {
-    pub fn allied() -> Self {
-        Projectile {
-            ptype: ProjectileType::Allied,
-            remove_flag: false,
-        }
-    }
-    pub fn enemy() -> Self {
-        Projectile {
-            ptype: ProjectileType::Enemy,
-            remove_flag: false,
-        }
-    }
+pub enum Projectile {
+    Allied,
+    Enemy,
 }
 
 #[derive(Component, Debug, Clone)]

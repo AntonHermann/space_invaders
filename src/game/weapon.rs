@@ -19,7 +19,7 @@ impl<'a> System<'a> for WeaponSystem {
                 let shot = updater.create_entity(&entities)
                     .with(pos)
                     .with(Appearance::Shot)
-                    .with(Projectile::allied())
+                    .with(Projectile::Allied)
                     .build();
                 info!("created shot: {:?}", shot);
             }
@@ -47,23 +47,19 @@ impl<'a> System<'a> for BulletMovementSystem {
             .expect("couldn't get terminal height")
             .1 as usize;
 
-        let mut bullet_reached_top = false;
-
         for (pos, proj, ent) in (&mut position, &mut projectile, &*ents).join() {
             trace!("bullet: {:?} {:?} {:?}", ent, proj, pos);
-            match proj.ptype {
-                ProjectileType::Allied => {
+            match proj {
+                Projectile::Allied => {
                     trace!("  {} < {}", pos.y, term_height);
                     if pos.y < term_height {
                         pos.y += 1;
                     } else {
-                        // proj.remove_flag = true;
-                        // bullet_reached_top = true;
                         let res = (&*ents).delete(ent);
                         debug!("tried to delete bullet, result: {:?}", res);
                     }
                 },
-                ProjectileType::Enemy  => {
+                Projectile::Enemy  => {
                     // TODO: implement enemy bullet movement
                     unimplemented!()
                 },
