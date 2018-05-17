@@ -1,5 +1,7 @@
-use specs::{Component, VecStorage};
+use specs::prelude::*;
 use std::borrow::Cow;
+use termion::event::Key;
+use super::*;
 
 #[derive(Clone, Debug)]
 pub struct Position {
@@ -11,18 +13,30 @@ impl Component for Position {
 }
 
 #[allow(dead_code)]
-#[derive(Clone, Debug)]
+#[derive(Component, Debug, Clone)]
+#[component(VecStorage)]
+pub struct Velocity(pub isize);
+impl Velocity {
+    pub fn idle() -> Self {
+        Velocity(0)
+    }
+}
+
+#[allow(dead_code)]
+#[derive(Component, Debug, Clone)]
+#[component(VecStorage)]
 pub enum Appearance {
     Player,
     Enemy,
+    Shot,
     Other(String),
 }
-
 impl Appearance {
     pub fn to_string(&self) -> Cow<str> {
         match self {
-            Appearance::Player => Cow::Borrowed("/O\\"),
-            Appearance::Enemy => Cow::Borrowed("U"),
+            Appearance::Player   => Cow::Borrowed("/O\\"),
+            Appearance::Enemy    => Cow::Borrowed("U"),
+            Appearance::Shot     => Cow::Borrowed("|"),
             Appearance::Other(s) => Cow::Borrowed(s),
         }
     }
@@ -30,10 +44,34 @@ impl Appearance {
         match self {
             Appearance::Player   => 3,
             Appearance::Enemy    => 1,
+            Appearance::Shot     => 1,
             Appearance::Other(s) => s.len(),
         }
     }
 }
-impl Component for Appearance {
+
+#[allow(dead_code)]
+struct Projectile {
+    pub velocity: f32,
+    pub direction: VDirection,
+}
+impl Component for Projectile {
     type Storage = VecStorage<Self>;
+}
+
+#[derive(Component, Debug, Clone)]
+#[component(VecStorage)]
+pub struct PlayerControls {
+    pub key_move_right: Key,
+    pub key_move_left: Key,
+    pub key_shoot: Key,
+}
+impl PlayerControls {
+    pub fn new() -> Self {
+        PlayerControls {
+            key_move_right: Key::Right,
+            key_move_left: Key::Left,
+            key_shoot: Key::Char(' '),
+        }
+    }
 }

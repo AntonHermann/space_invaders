@@ -62,8 +62,8 @@ pub fn show_menu() -> Result<MenuOptions, Error> {
                 write!(stdout, "{}", termion::cursor::Show)?;
                 return Ok(selected);
             }
-            n => write!(stdout, "{}{:?}", termion::cursor::Goto(1, 1), n)?,
-            // _ => {},
+            // n => write!(stdout, "{}{:?}", termion::cursor::Goto(1, 1), n)?,
+            _ => {},
         }
         draw_menu(&mut stdout, &selected)?;
     }

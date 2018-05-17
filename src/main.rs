@@ -1,3 +1,5 @@
+#![feature(custom_attribute)]
+
 // extern crates
 #[allow(unused_imports)]
 #[macro_use]
@@ -9,6 +11,8 @@ extern crate loggerv;
 #[macro_use]
 extern crate failure_derive;
 extern crate specs;
+#[macro_use]
+extern crate specs_derive;
 extern crate termion;
 
 // modules
@@ -42,7 +46,12 @@ fn run() -> Result<(), Error> {
                 .help("Sets the level of verbosity"),
         )
         .get_matches();
-    loggerv::init_with_verbosity(args.occurrences_of("v"))?;
+    loggerv::Logger::default()
+        .verbosity(args.occurrences_of("v"))
+        .output(&log::Level::Info , loggerv::Output::Stderr)
+        .output(&log::Level::Debug, loggerv::Output::Stderr)
+        .output(&log::Level::Trace, loggerv::Output::Stderr)
+        .init().unwrap();
 
     loop {
         match show_menu()? {
