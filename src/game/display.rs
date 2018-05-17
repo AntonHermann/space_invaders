@@ -70,7 +70,6 @@ impl<'a> System<'a> for RenderingSystem {
                 cursor::Goto(x as u16, y),
                 a.to_string()
             ).expect("couldn't print to stdout");
-            write!(self.stdout, "{} x:{} p.x:{} w:{}", cursor::Goto(10,10), x, p.x, w).unwrap();
         }
         self.stdout.flush();
     }
