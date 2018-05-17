@@ -3,16 +3,13 @@ use std::borrow::Cow;
 use termion::event::Key;
 use super::*;
 
-#[derive(Clone, Debug)]
+#[derive(Component, Debug, Clone)]
+#[component(VecStorage)]
 pub struct Position {
     pub x: usize,
     pub y: usize,
 }
-impl Component for Position {
-    type Storage = VecStorage<Self>;
-}
 
-#[allow(dead_code)]
 #[derive(Component, Debug, Clone)]
 #[component(VecStorage)]
 pub struct Velocity(pub isize);
@@ -22,7 +19,6 @@ impl Velocity {
     }
 }
 
-#[allow(dead_code)]
 #[derive(Component, Debug, Clone)]
 #[component(VecStorage)]
 pub enum Appearance {
@@ -50,13 +46,30 @@ impl Appearance {
     }
 }
 
-#[allow(dead_code)]
-struct Projectile {
-    pub velocity: f32,
-    pub direction: VDirection,
+#[derive(Debug, Clone)]
+pub enum ProjectileType {
+    Allied,
+    Enemy,
 }
-impl Component for Projectile {
-    type Storage = VecStorage<Self>;
+#[derive(Component, Debug, Clone)]
+#[component(VecStorage)]
+pub struct Projectile {
+    pub ptype: ProjectileType,
+    pub remove_flag: bool,
+}
+impl Projectile {
+    pub fn allied() -> Self {
+        Projectile {
+            ptype: ProjectileType::Allied,
+            remove_flag: false,
+        }
+    }
+    pub fn enemy() -> Self {
+        Projectile {
+            ptype: ProjectileType::Enemy,
+            remove_flag: false,
+        }
+    }
 }
 
 #[derive(Component, Debug, Clone)]
@@ -67,11 +80,44 @@ pub struct PlayerControls {
     pub key_shoot: Key,
 }
 impl PlayerControls {
-    pub fn new() -> Self {
+    pub fn default_player() -> Self {
         PlayerControls {
             key_move_right: Key::Right,
             key_move_left: Key::Left,
             key_shoot: Key::Char(' '),
         }
     }
+}
+
+#[derive(Component, Debug, Clone)]
+#[component(VecStorage)]
+pub struct Weapon {
+    dir: VDirection,
+    base_cooldown: usize,
+    pub current_cooldown: usize,
+    pub shot: Option<Position>,
+}
+impl Weapon {
+    pub fn new(dir: VDirection, base_cooldown: usize) -> Self {
+        Weapon {
+            dir,
+            base_cooldown,
+            current_cooldown: 0,
+            shot: None,
+        }
+    }
+    pub fn default_player() -> Self {
+        Self::new(VDirection::Up, 10)
+    }
+    pub fn try_shoot(&mut self, source_pos: &Position) {
+        trace!("enter");
+        if self.current_cooldown == 0 {
+            trace!("shoot");
+            self.current_cooldown = self.base_cooldown;
+            self.shot = Some(source_pos.clone());
+        }
+    }
+    // pub fn get_base_cooldown(&self) -> usize {
+    //     self.base_cooldown
+    // }
 }

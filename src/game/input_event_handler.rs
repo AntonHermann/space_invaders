@@ -12,6 +12,7 @@ pub fn input_events() -> Receiver<Key> {
             let c = c.expect("error getting keyboard inputs");
             if let Err(_) = tx.send(c) {
                 // reveiver closed connection => game isn't running
+                debug!("input_event channel closed");
                 break;
             }
         }

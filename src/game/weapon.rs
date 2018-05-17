@@ -1,51 +1,73 @@
 use specs::prelude::*;
-use std::time::{Instant, Duration};
+use termion;
 use super::*;
-
-pub struct Weapon {
-    dir: VDirection,
-    last_shot: Instant,
-    cooldown: Duration,
-}
-impl Component for Weapon {
-    type Storage = VecStorage<Self>;
-}
-impl Weapon {
-    pub fn new(dir: VDirection, cooldown: Duration) -> Self {
-        Weapon {
-            dir, last_shot: Instant::now(), cooldown
-        }
-    }
-}
 
 pub struct WeaponSystem;
 impl<'a> System<'a> for WeaponSystem {
     type SystemData = (
-        // Entities<'a>,
-        // ReadStorage<'a, Position>,
-        // WriteStorage<'a, PlayerControls>,
-        // WriteStorage<'a, Weapon>,
-        // Read<'a, LazyUpdate>
+        Entities<'a>,
+        WriteStorage<'a, Weapon>,
+        Read<'a, LazyUpdate>
     );
 
-    fn run(&mut self, _: Self::SystemData) {
-        // TODO: implement weapon system
+    fn run(&mut self, (entities, mut weapon, updater): Self::SystemData) {
+        trace!("enter");
+        for weapon in (&mut weapon).join() {
+            trace!("weapon {:?}", weapon);
+            // fire shots
+            if let Some(pos) = weapon.shot.take() {
+                let shot = updater.create_entity(&entities)
+                    .with(pos)
+                    .with(Appearance::Shot)
+                    .with(Projectile::allied())
+                    .build();
+                info!("created shot: {:?}", shot);
+            }
+            // and decrease cooldown
+            if weapon.current_cooldown > 0 {
+                weapon.current_cooldown -= 1;
+                trace!("decrease weapon cd to: {}", weapon.current_cooldown);
+            }
+        }
     }
-    // fn run(&mut self, (entities, pos, mut paq, mut weapon, updater): Self::SystemData) {
-    //     for (position, paq, w) in (&pos, &mut paq, &mut weapon).join() {
-    //         // if weapon isn't on cooldown
-    //         if w.last_shot.elapsed() >= w.cooldown {
-    //             // ... and front action is shoot
-    //             if paq.pop_if_eq(&PlayerAction::Shoot) {
-    //                 w.last_shot = Instant::now();
-    //                 let shot = updater
-    //                     .create_entity(&entities)
-    //                     .with(position.clone())
-    //                     .with(Appearance::Shot)
-    //                     .build();
-    //                 info!("created shot: {:?}", shot);
-    //             }
-    //         }
-    //     }
-    // }
+}
+
+pub struct BulletMovementSystem;
+impl<'a> System<'a> for BulletMovementSystem {
+    type SystemData = (
+        WriteStorage<'a, Position>,
+        WriteStorage<'a, Projectile>,
+        Entities<'a>,
+    );
+
+    fn run(&mut self, (mut position, mut projectile, ents): Self::SystemData) {
+        trace!("enter");
+
+        let term_height = termion::terminal_size()
+            .expect("couldn't get terminal height")
+            .1 as usize;
+
+        let mut bullet_reached_top = false;
+
+        for (pos, proj, ent) in (&mut position, &mut projectile, &*ents).join() {
+            trace!("bullet: {:?} {:?} {:?}", ent, proj, pos);
+            match proj.ptype {
+                ProjectileType::Allied => {
+                    trace!("  {} < {}", pos.y, term_height);
+                    if pos.y < term_height {
+                        pos.y += 1;
+                    } else {
+                        // proj.remove_flag = true;
+                        // bullet_reached_top = true;
+                        let res = (&*ents).delete(ent);
+                        debug!("tried to delete bullet, result: {:?}", res);
+                    }
+                },
+                ProjectileType::Enemy  => {
+                    // TODO: implement enemy bullet movement
+                    unimplemented!()
+                },
+            }
+        }
+    }
 }

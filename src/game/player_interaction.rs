@@ -4,7 +4,6 @@ use termion::event::Key;
 
 use super::components::*;
 use super::GameActive;
-use super::weapon::Weapon;
 
 pub struct PlayerInteractionSystem {
     rx: Receiver<Key>,
@@ -20,12 +19,15 @@ impl<'a> System<'a> for PlayerInteractionSystem {
     type SystemData = (
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, Weapon>,
+        ReadStorage<'a, Position>,
         ReadStorage<'a, PlayerControls>,
         Write<'a, GameActive>,
     );
 
-    fn run(&mut self, (mut velocity, mut weapon, pc, mut ga): Self::SystemData) {
+    fn run(&mut self, (mut velocity, mut weapon, pos, pc, mut ga): Self::SystemData) {
+        trace!("enter");
         while let Ok(key) = self.rx.try_recv() {
+            trace!("key: {:?}", key);
             match key {
                 Key::Char('q') => {
                     debug!("quit");
@@ -35,16 +37,21 @@ impl<'a> System<'a> for PlayerInteractionSystem {
                 Key::Esc => {
                     debug!("pause");
                     // TODO: implement pause mechanic
+                    *ga = GameActive(false);
+                    break;
                 }
                 key => {
                     // loop players to match player control keys
-                    for (velocity, _weapon, pc) in (&mut velocity, &mut weapon, &pc).join() {
+                    for (velocity, weapon, pos, pc) in (&mut velocity, &mut weapon, &pos, &pc).join() {
                         if key == pc.key_move_left {
+                            trace!("key_left");
                             velocity.0 -= 1;
                         } else if key == pc.key_move_right {
+                            trace!("key_right");
                             velocity.0 += 1;
                         } else if key == pc.key_shoot {
-                            // TODO: implement shooting mechanic
+                            trace!("key_shoot");
+                            weapon.try_shoot(pos);
                         }
                     }
                 }

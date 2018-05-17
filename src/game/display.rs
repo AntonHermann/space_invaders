@@ -54,18 +54,23 @@ impl<'a> System<'a> for RenderingSystem {
     );
 
     fn run(&mut self, (pos, ap): Self::SystemData) {
+        trace!("enter");
         // TODO: add error handling
         let (_, term_height) = termion::terminal_size().expect("couldn't get terminal size");
 
+        write!(self.stdout, "{}", clear::All).expect("couldn't clear screen");
         for (p, a) in (&pos, &ap).join() {
+            trace!("rendering {:?} {:?}", a, p);
             let y = term_height - p.y as u16;
+            let w = a.get_width() / 2;
+            let x = if p.x > w { p.x - w } else { 1 }; // make sure x is 1 or greater
             write!(
                 self.stdout,
-                "{}{}{}",
-                cursor::Goto(p.x as u16, y),
-                clear::All,
+                "{}{}",
+                cursor::Goto(x as u16, y),
                 a.to_string()
             ).expect("couldn't print to stdout");
+            write!(self.stdout, "{} x:{} p.x:{} w:{}", cursor::Goto(10,10), x, p.x, w).unwrap();
         }
         self.stdout.flush();
     }

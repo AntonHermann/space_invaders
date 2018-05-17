@@ -1,13 +1,12 @@
 #![feature(custom_attribute)]
+#![allow(unused_attributes, unused_imports)]
 
 // extern crates
-#[allow(unused_imports)]
 #[macro_use]
 extern crate log;
 extern crate clap;
 extern crate failure;
 extern crate loggerv;
-#[allow(unused_imports)]
 #[macro_use]
 extern crate failure_derive;
 extern crate specs;
