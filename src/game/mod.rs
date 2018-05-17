@@ -1,6 +1,7 @@
 use failure::Error;
 use specs::{DispatcherBuilder, World};
 use std::{thread, time};
+use std::sync::atomic::Ordering;
 
 mod components;
 mod player_interaction;
@@ -53,7 +54,6 @@ pub fn run_game() -> Result<(), Error> {
         .build();
 
     let sleep_duration = time::Duration::from_millis(10);
-    // let sleep_duration = time::Duration::from_millis(10000);
 
     // GAME LOOP
     loop {

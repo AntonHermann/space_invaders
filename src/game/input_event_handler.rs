@@ -10,10 +10,15 @@ pub fn input_events() -> Receiver<Key> {
         let stdin = stdin();
         for c in stdin.keys() {
             let c = c.expect("error getting keyboard inputs");
-            if let Err(_) = tx.send(c) {
+            if tx.send(c).is_err() {
                 // reveiver closed connection => game isn't running
                 debug!("input_event channel closed");
-                break;
+                // break;
+                return;
+            }
+            if c == Key::Char('q') || c == Key::Ctrl('c') {
+                debug!("exit key pressed");
+                return;
             }
         }
     });

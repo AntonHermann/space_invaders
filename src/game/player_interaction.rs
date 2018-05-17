@@ -29,7 +29,7 @@ impl<'a> System<'a> for PlayerInteractionSystem {
         while let Ok(key) = self.rx.try_recv() {
             trace!("key: {:?}", key);
             match key {
-                Key::Char('q') => {
+                Key::Char('q') | Key::Ctrl('q') => {
                     debug!("quit");
                     *ga = GameActive(false);
                     break;
