@@ -4,22 +4,12 @@ use std::{thread, time};
 use std::sync::atomic::Ordering;
 
 mod components;
-mod player_interaction;
-mod player_movement;
-mod display;
-mod weapon;
+mod systems;
 mod input_event_handler;
 
-mod debug_system;
-
 use self::components::*;
-use self::player_interaction::*;
-use self::player_movement::*;
-use self::display::*;
-use self::weapon::*;
+use self::systems::*;
 use self::input_event_handler::*;
-
-use self::debug_system::*;
 
 #[derive(Clone, Debug)]
 pub enum VDirection {

@@ -1,7 +1,7 @@
 use specs::prelude::*;
 use termion;
 
-use super::components::*;
+use game::components::*;
 
 pub struct PlayerMovementSystem;
 impl<'a> System<'a> for PlayerMovementSystem {

@@ -4,7 +4,7 @@ use termion::{clear, cursor};
 use termion::raw::{RawTerminal, IntoRawMode};
 use specs::prelude::*;
 
-use super::components::*;
+use game::components::*;
 
 fn flush(rt: &mut RawTerminal<Stdout>) {
     rt.flush().expect("failed flushing stdout");

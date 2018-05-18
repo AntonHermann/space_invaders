@@ -1,6 +1,7 @@
 use specs::prelude::*;
 use termion;
-use super::*;
+
+use game::components::*;
 
 pub struct WeaponSystem;
 impl<'a> System<'a> for WeaponSystem {

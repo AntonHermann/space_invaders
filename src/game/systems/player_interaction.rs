@@ -2,8 +2,8 @@ use specs::prelude::*;
 use std::sync::mpsc::Receiver;
 use termion::event::Key;
 
-use super::components::*;
-use super::GameActive;
+use game::components::*;
+use game::GameActive;
 
 pub struct PlayerInteractionSystem {
     rx: Receiver<Key>,
