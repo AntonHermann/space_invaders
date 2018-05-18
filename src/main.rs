@@ -1,4 +1,3 @@
-#![feature(custom_attribute)]
 #![allow(unused_attributes, unused_imports)]
 
 // extern crates
