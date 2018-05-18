@@ -53,17 +53,23 @@ pub fn run_game() -> Result<(), Error> {
         .with(DebugSystem, "debug_system", &[])
         .build();
 
-    let sleep_duration = time::Duration::from_millis(10);
+    // frames   s      ms
+    //   30     1     1000
+    //   10     1/3   1000/3
+    //    1     1/30  100/3
+    let target_update_rate = time::Duration::from_millis(100) / 3;
 
     // GAME LOOP
     loop {
         trace!("tick");
+        let start = time::Instant::now();
         dispatcher.dispatch(&mut world.res);
         world.maintain();
         if world.read_resource::<GameActive>().0 == false {
             break;
         }
-        thread::sleep(sleep_duration);
+        let elapsed = start.elapsed();
+        thread::sleep(target_update_rate - elapsed);
     }
 
     Ok(())
