@@ -3,15 +3,28 @@ use std::borrow::Cow;
 use termion::event::Key;
 use super::*;
 
-#[derive(Component, Debug, Clone)]
-#[component(VecStorage)]
+macro_rules! derive_component {
+    ($n:ident) => {
+        impl Component for $n {
+            type Storage = DenseVecStorage<Self>;
+        }
+    };
+    ($n:ident, $t:ident) => {
+        impl Component for $n {
+            type Storage = $t<Self>;
+        }
+    }
+}
+
+derive_component!(Position);
+#[derive(Debug, Clone)]
 pub struct Position {
     pub x: usize,
     pub y: usize,
 }
 
-#[derive(Component, Debug, Clone)]
-#[component(VecStorage)]
+derive_component!(Velocity, VecStorage);
+#[derive(Debug, Clone)]
 pub struct Velocity(pub isize);
 impl Velocity {
     pub fn idle() -> Self {
@@ -19,8 +32,8 @@ impl Velocity {
     }
 }
 
-#[derive(Component, Debug, Clone)]
-#[component(VecStorage)]
+derive_component!(Appearance, VecStorage);
+#[derive(Debug, Clone)]
 pub enum Appearance {
     Player,
     Enemy,
@@ -46,15 +59,15 @@ impl Appearance {
     }
 }
 
-#[derive(Component, Debug, Clone)]
-#[component(VecStorage)]
+derive_component!(Projectile, VecStorage);
+#[derive(Debug, Clone)]
 pub enum Projectile {
     Allied,
     Enemy,
 }
 
-#[derive(Component, Debug, Clone)]
-#[component(VecStorage)]
+derive_component!(PlayerControls);
+#[derive(Debug, Clone)]
 pub struct PlayerControls {
     pub key_move_right: Key,
     pub key_move_left: Key,
@@ -70,8 +83,8 @@ impl PlayerControls {
     }
 }
 
-#[derive(Component, Debug, Clone)]
-#[component(VecStorage)]
+derive_component!(Weapon);
+#[derive(Debug, Clone)]
 pub struct Weapon {
     dir: VDirection,
     base_cooldown: usize,

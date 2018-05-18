@@ -10,8 +10,6 @@ extern crate loggerv;
 #[macro_use]
 extern crate failure_derive;
 extern crate specs;
-#[macro_use]
-extern crate specs_derive;
 extern crate termion;
 
 // modules
