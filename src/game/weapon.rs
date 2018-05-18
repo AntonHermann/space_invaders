@@ -16,8 +16,12 @@ impl<'a> System<'a> for WeaponSystem {
             trace!("weapon {:?}", weapon);
             // fire shots
             if let Some(pos) = weapon.shot.take() {
+                let pos_one_up = Position {
+                    y: pos.y + 1,
+                    x: pos.x
+                };
                 let shot = updater.create_entity(&entities)
-                    .with(pos)
+                    .with(pos_one_up)
                     .with(Appearance::Shot)
                     .with(Projectile::Allied)
                     .build();
