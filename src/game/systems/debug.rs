@@ -9,9 +9,9 @@ impl<'a> System<'a> for DebugSystem {
     );
 
     fn run(&mut self, (pos, ap): Self::SystemData) {
-        trace!("enter");
-        for (pos, ap) in (&pos, &ap).join() {
-            debug!("{:?} {:?}", pos, ap);
-        }
+        // trace!("enter");
+        // for (pos, ap) in (&pos, &ap).join() {
+        //     debug!("{:?} {:?}", pos, ap);
+        // }
     }
 }

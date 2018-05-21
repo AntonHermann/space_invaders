@@ -17,7 +17,7 @@ macro_rules! derive_component {
 }
 
 derive_component!(Position);
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Position {
     pub x: usize,
     pub y: usize,
@@ -49,6 +49,12 @@ impl Appearance {
             Appearance::Other(s) => Cow::Borrowed(s),
         }
     }
+    // pub fn to_string2(&self) -> &[&str] {
+    //     match self {
+    //         Appearance::Player => &[" o ", "/O\\"],
+    //         _ => &[],
+    //     }
+    // }
     pub fn get_width(&self) -> usize {
         match self {
             Appearance::Player   => 3,
@@ -60,7 +66,7 @@ impl Appearance {
 }
 
 derive_component!(Projectile, VecStorage);
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Projectile {
     Allied,
     Enemy,
@@ -115,3 +121,7 @@ impl Weapon {
     //     self.base_cooldown
     // }
 }
+
+derive_component!(EnemyFlag, NullStorage);
+#[derive(Debug, Default)]
+pub struct EnemyFlag;
