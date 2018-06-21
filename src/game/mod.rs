@@ -19,6 +19,10 @@ const ENEMY_SPACE_Y:  usize = 3;
 const ENEMY_OFFSET_X: usize = 5;
 const ENEMY_OFFSET_Y: usize = 5;
 
+const PLAYER_STR: &'static str = "/O\\";
+const ENEMY_STR:  &'static str = "U";
+const SHOT_STR:   &'static str = "|";
+
 #[derive(Clone, Debug)]
 pub enum VDirection {
     Up,

@@ -38,29 +38,20 @@ pub enum Appearance {
     Player,
     Enemy,
     Shot,
-    Other(String),
 }
 impl Appearance {
-    pub fn to_string(&self) -> Cow<str> {
+    pub fn to_string(&self) -> &'static str {
         match self {
-            Appearance::Player   => Cow::Borrowed("/O\\"),
-            Appearance::Enemy    => Cow::Borrowed("U"),
-            Appearance::Shot     => Cow::Borrowed("|"),
-            Appearance::Other(s) => Cow::Borrowed(s),
+            Appearance::Player => PLAYER_STR,
+            Appearance::Enemy  => ENEMY_STR,
+            Appearance::Shot   => SHOT_STR,
         }
     }
-    // pub fn to_string2(&self) -> &[&str] {
-    //     match self {
-    //         Appearance::Player => &[" o ", "/O\\"],
-    //         _ => &[],
-    //     }
-    // }
     pub fn get_width(&self) -> usize {
         match self {
-            Appearance::Player   => 3,
-            Appearance::Enemy    => 1,
-            Appearance::Shot     => 1,
-            Appearance::Other(s) => s.len(),
+            Appearance::Player => PLAYER_STR.len(),
+            Appearance::Enemy  => ENEMY_STR.len(),
+            Appearance::Shot   => SHOT_STR.len(),
         }
     }
 }
