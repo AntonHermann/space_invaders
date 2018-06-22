@@ -4,3 +4,4 @@ c_impl
 Cargo.lock
 vendor
 rls
+.vscode
